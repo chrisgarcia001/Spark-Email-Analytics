@@ -16,7 +16,7 @@ import sys
 # Print usage instructions.
 def print_usage():
 	msg = "Usage: > cardinality_email_address_search <directory of emails> <output file> [-cardinality_range <min>:<max>]\n"
-	msg += "        [-target_list <list of names/email addresses>] [-match_range <match file>:<min>:<max>]\n"
+	msg += "        [-target_list <list of names/email addresses>] [-match_range <min>:<max>]\n"
 	msg += "        [-address_classes FROM:TO:CC:BCC **Default=All]"
 	print(msg)
 
