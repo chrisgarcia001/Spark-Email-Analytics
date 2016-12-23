@@ -1,0 +1,1 @@
+python .\cardinality_email_address_search.py test_email_data .\output\output.txt -cardinality_range 1:5 -target_file .\test_data\test_email_list -target_range 1:4
