@@ -1,0 +1,5 @@
+PARAMETER,VALUE
+email_folder,test_email_data
+output_file,.\output\output.txt 
+address_classes,TO
+cardinality_range,1;10
