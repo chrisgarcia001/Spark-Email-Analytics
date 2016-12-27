@@ -2,11 +2,14 @@
 # Author: cgarcia
 # About: This script is for cardinality-based searching of email addresses/recipients.
 #        The recipient categories to include in the search (FROM, TO, CC, and BCC) may 
-#        be specified in the command line. This script enables two types of cardinalty
+#        be specified in the parameter file. This script enables two types of cardinality
 #        searching which may be combined:
+#        
 #        1) Finding emails with specified min/max number of total recipients
 #        2) Finding emails with specified min/max number of recipients from a given 
 #           list.
+#        
+#        See the two corresponding demo parameter files for examples on how to use this.
 #--------------------------------------------------------------------------------------
 
 from pyspark import SparkConf, SparkContext
