@@ -12,42 +12,13 @@
 from pyspark import SparkConf, SparkContext
 import email_parsing as ep
 import sys
+import csv_util as csv
 
 # Print usage instructions.
 def print_usage():
-	msg = "Usage: > cardinality_email_address_search <directory of emails> <output file> [-cardinality_range <min>:<max>]\n"
-	msg += "        [-target_list <list of names/email addresses>] [-match_range <min>:<max>]\n"
-	msg += "        [-address_classes FROM:TO:CC:BCC **Default=All]"
+	msg = "Usage: > cardinality_email_address_search <parameter file> \n"
+	msg += "        ** SEE SAMPLE PARAMETER FILES FOR EXAMPLES \n"
 	print(msg)
-
-# Evaluate and parse an input argument value.
-def eval_input(struct, sep = ':'):
-	is_struct = sep in struct
-	strings = struct.split(':')
-	vals = []
-	for s in strings:
-		try:
-			iv = int(s)
-			vals.append(iv)
-		except:
-			vals.append(s)
-	if not(is_struct):
-		return vals[0]
-	return vals	
-
-# Build input args into a parameter set.
-def parse_args(args):
-	params = {}
-	params['email_folder'] = args[1]
-	params['output_file'] = args[2]
-	i = 3
-	while i < len(args):
-		key = args[i][1:]
-		print(key)
-		val = eval_input(args[i + 1])
-		params[key] = val
-		i += 2
-	return params
 
 # Build the search criteria function based on the input args. The resulting function takes in
 # raw email text (in standard .eml format) for a single email and returns True or False. 
@@ -83,17 +54,16 @@ def build_criteria_f(params):
 params = None
 criteria_f = None	
 try:
-	params = parse_args(sys.argv)
+	eval_f = lambda x: csv.standard_eval_input(x, sep=';')
+	params = csv.read_params(sys.argv[1], input_evaluator_f=eval_f)
 	criteria_f = build_criteria_f(params)
 except:
 	print_usage()
 	exit()
-	
+
 # Perform the search and write the output file.
 conf = SparkConf().setMaster('local').setAppName('Cardinality Email Search')
 sc = SparkContext(conf = conf)
 matches = sc.wholeTextFiles(params['email_folder']).filter(lambda (filename, text): criteria_f(text)).map(lambda (filename, text): filename)
 matches.saveAsTextFile(params['output_file'])
-#for path in matches.collect():
-#	print(path)
 exit()
