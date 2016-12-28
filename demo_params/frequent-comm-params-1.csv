@@ -3,6 +3,6 @@ email_folder,test_email_data,"###NOTE: To search all subfolders, simply end the 
 output_file,./output/output.txt ,
 target_pattern_file,./test_data/test_email_list.txt,
 min_support,0.1,
-num_partitions,-1,
+num_partitions,1,
 pattern_size_range,1;100,
-address_classes,FROM:CC,
+address_classes,FROM;CC,

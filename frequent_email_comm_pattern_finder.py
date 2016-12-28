@@ -42,7 +42,7 @@ try:
 	email_folder = params['email_folder']
 	output_file = params['output_file']
 	if params.has_key('target_pattern_file'):
-		target_pattern_file = open(filename, 'r')	
+		target_pattern_file = open(params['target_pattern_file'], 'r')	
 		tp = map(lambda x: x.replace(',', ';').split(';'), target_pattern_file.readlines())
 		target_pattern_file.close()
 		tp = map(lambda x: filter(lambda y: not(y in ['', ' ', "\t", None]), map(lambda z: z.strip(), x)), tp)
