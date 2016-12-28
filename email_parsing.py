@@ -68,7 +68,7 @@ class Email:
 		em = []
 		for c in classes:
 			em += self.email_addresses[c.lower()]
-		return list(set(em))
+		return filter(lambda x: not(x in [None, '', ' ', "\t", "\n"]), list(set(em)))
 	
 	# Count the email addresses in the specified classes.
 	def count_addresses(self, classes = ['to', 'from', 'cc', 'bcc']):

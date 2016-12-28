@@ -24,15 +24,25 @@ def print_usage():
 	msg = "Usage: > frequent_email_comm_pattern_finder.py <parameter file> \n"
 	msg += "        ** SEE SAMPLE PARAMETER FILES FOR EXAMPLES \n"
 	print(msg)
+
+# For a given itemset and list of target names, determine of the specified number of matches occur.
+def itemset_match(itemset, target_names, min_count, max_count):
+	count = 0
+	for i in itemset:
+		for j in target_names:
+			if j in i:
+				count += 1
+	return min_count <= count and max_count >= count
 	
 # Initialize key variables.
 params = None
 email_folder = None
-target_patterns = None
+target_names = []
+min_matches, max_matches = 0, 1000000000000
 output_file = None
 address_classes = ['to', 'from', 'cc', 'bcc']
 min_support = 0.1
-num_partitions = -1
+num_partitions = 1
 min_size, max_size = 0, 1000000000000
 
 # Extract the params and set key variables:
@@ -41,18 +51,18 @@ try:
 	params = csv.read_params(sys.argv[1], input_evaluator_f=eval_f)
 	email_folder = params['email_folder']
 	output_file = params['output_file']
-	if params.has_key('target_pattern_file'):
-		target_pattern_file = open(params['target_pattern_file'], 'r')	
-		tp = map(lambda x: x.replace(',', ';').split(';'), target_pattern_file.readlines())
-		target_pattern_file.close()
-		tp = map(lambda x: filter(lambda y: not(y in ['', ' ', "\t", None]), map(lambda z: z.strip(), x)), tp)
-		target_patterns = tp
+	if params.has_key('target_name_file'):
+		target_name_file = open(params['target_name_file'], 'r')	
+		target_names = filter(lambda x: not(x in [None, '', ' ', "\t", "\n"]), map(lambda y: y.strip(), target_name_file.readlines()))
+		target_name_file.close()
+	if params.has_key('target_match_range'):
+		min_matches, max_matches = params['target_match_range']
+	if params.has_key('itemset_size_range'):
+		min_size, max_size = params['itemset_size_range']
 	if params.has_key('min_support'):
 		min_support = params['min_support']
 	if params.has_key('num_partitions'):
 		num_partitions = params['num_partitions']
-	if params.has_key('pattern_size_range'):
-		min_size, max_size = params['pattern_size_range']
 	if params.has_key('address_classes'):
 		address_classes = params['address_classes']
 		if type(address_classes) != type([]):
@@ -61,20 +71,14 @@ except:
 	print_usage()
 	exit()
 
-# TODO - Implement the main part below!
+# Main section - mine frequent itemsets, apply filtering, and store results.
 conf = SparkConf().setMaster('local').setAppName('Frequent Email Communication Pattern Finder')
 sc = SparkContext(conf = conf)
-#matches = sc.wholeTextFiles(params['email_folder']).filter(lambda (filename, text): criteria_f(text)).map(lambda (filename, text): filename)
-#matches.saveAsTextFile(params['output_file'])
-#---
-#data = sc.textFile("data/mllib/sample_fpgrowth.txt")
-#transactions = data.map(lambda line: line.strip().split(' '))
 data = sc.wholeTextFiles(params['email_folder'])
 transactions = data.map(lambda (file, text): ep.Email(text).select_addresses(address_classes))
 model = FPGrowth.train(transactions, minSupport=min_support, numPartitions=num_partitions)
-result = model.freqItemsets().collect()
-for fi in result:
-    print(fi)
-#---
+f = lambda x: len(x) >= min_size and len(x) <= max_size and itemset_match(x, target_names, min_matches, max_matches)
+itemsets = model.freqItemsets().map(lambda x: x.items).filter(f)
+itemsets.saveAsTextFile(params['output_file'])
 exit()
 	
