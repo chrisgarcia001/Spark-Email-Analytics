@@ -30,6 +30,7 @@ params = None
 email_folder = None
 target_patterns = None
 output_file = None
+address_classes = ['to', 'from', 'cc', 'bcc']
 min_support = 0.1
 num_partitions = -1
 min_size, max_size = 0, 1000000000000
@@ -52,14 +53,28 @@ try:
 		num_partitions = params['num_partitions']
 	if params.has_key('pattern_size_range'):
 		min_size, max_size = params['pattern_size_range']
+	if params.has_key('address_classes'):
+		address_classes = params['address_classes']
+		if type(address_classes) != type([]):
+			address_classes = [address_classes]
 except:
 	print_usage()
 	exit()
 
 # TODO - Implement the main part below!
-conf = SparkConf().setMaster('local').setAppName('Cardinality Email Search')
+conf = SparkConf().setMaster('local').setAppName('Frequent Email Communication Pattern Finder')
 sc = SparkContext(conf = conf)
-matches = sc.wholeTextFiles(params['email_folder']).filter(lambda (filename, text): criteria_f(text)).map(lambda (filename, text): filename)
-matches.saveAsTextFile(params['output_file'])
+#matches = sc.wholeTextFiles(params['email_folder']).filter(lambda (filename, text): criteria_f(text)).map(lambda (filename, text): filename)
+#matches.saveAsTextFile(params['output_file'])
+#---
+#data = sc.textFile("data/mllib/sample_fpgrowth.txt")
+#transactions = data.map(lambda line: line.strip().split(' '))
+data = sc.wholeTextFiles(params['email_folder'])
+transactions = data.map(lambda (file, text): ep.Email(text).select_addresses(address_classes))
+model = FPGrowth.train(transactions, minSupport=min_support, numPartitions=num_partitions)
+result = model.freqItemsets().collect()
+for fi in result:
+    print(fi)
+#---
 exit()
 	
