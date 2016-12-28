@@ -28,8 +28,6 @@ def print_usage():
 # The generated criteria function has the following form:  
 #   f: <raw email text> -> True | False	
 def build_criteria_f(params):
-	emf = params['email_folder']
-	output_file = params['output_file']
 	min_card, max_card = 0, 1000000000000
 	if params.has_key('cardinality_range'):
 		min_card, max_card = params['cardinality_range']
