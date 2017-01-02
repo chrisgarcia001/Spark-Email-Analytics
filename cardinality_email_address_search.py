@@ -45,13 +45,10 @@ def build_criteria_f(params):
 		target_file.close()
 		target_file.close()
 	def criteria_f(email_text):
-		try:
-			eml = ep.Email(email_text)
-			card = eml.count_addresses(ac)
-			matches = eml.count_address_matches(tm, ac)
-			return card >= min_card and card <= max_card and matches >= min_match and matches <= max_match
-		except:
-			return False
+		eml = ep.Email(email_text)
+		card = eml.count_addresses(ac)
+		matches = eml.count_address_matches(tm, ac)
+		return card >= min_card and card <= max_card and matches >= min_match and matches <= max_match
 	return criteria_f
 
 # Extract the params and build the criteria function:
