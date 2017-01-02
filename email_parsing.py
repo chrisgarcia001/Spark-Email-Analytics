@@ -44,16 +44,21 @@ def parse_email_addresses(address_text):
 # A class for working with email.	
 class Email:
 	def __init__(self, raw_eml_text):
-		self.raw_text = raw_eml_text
-		msg = email.message_from_string(raw_eml_text)
-		self.parsed_message = msg
-		ads = map(normalized_email_addresses, [msg['to'], msg['from'], msg['cc'], msg['bcc']])
 		self.email_addresses = {}
-		self.email_addresses['to'], self.email_addresses['from'], self.email_addresses['cc'], self.email_addresses['bcc'] = ads
-		if msg.is_multipart():
-			self.body = msg.get_payload()[0]
-		else:
-			self.body = msg.get_payload()
+		self.email_addresses['to'], self.email_addresses['from'], self.email_addresses['cc'], self.email_addresses['bcc'] = [],[],[],[]
+		self.body = ''
+		try:
+			self.raw_text = raw_eml_text
+			msg = email.message_from_string(raw_eml_text)
+			self.parsed_message = msg
+			ads = map(normalized_email_addresses, [msg['to'], msg['from'], msg['cc'], msg['bcc']])
+			self.email_addresses['to'], self.email_addresses['from'], self.email_addresses['cc'], self.email_addresses['bcc'] = ads
+			if msg.is_multipart():
+				self.body = msg.get_payload()[0]
+			else:
+				self.body = msg.get_payload()
+		except:
+			pass
 
 	# Print the contents of this email - mainly for debugging.
 	def display(self):
