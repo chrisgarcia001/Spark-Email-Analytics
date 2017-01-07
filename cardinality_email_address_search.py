@@ -16,10 +16,14 @@ from pyspark import SparkConf, SparkContext
 import email_parsing as ep
 import sys
 import csv_util as csv
+import cmd_util as cmd
+
+# Set to this filename to be command line tolerant
+THIS_FILENAME = 'cardinality_email_address_search.py'
 
 # Print usage instructions.
 def print_usage():
-	msg = "Usage: > cardinality_email_address_search <parameter file> \n"
+	msg = "Usage: > cardinality_email_address_search -params <parameter file> \n"
 	msg += "        ** SEE SAMPLE PARAMETER FILES FOR EXAMPLES \n"
 	print(msg)
 
@@ -56,7 +60,8 @@ params = None
 criteria_f = None	
 try:
 	eval_f = lambda x: csv.standard_eval_input(x, sep=';')
-	params = csv.read_params(sys.argv[1], input_evaluator_f=eval_f)
+	cmds = cmd.read_cmd_params(sys.argv, mainfile_suffix=THIS_FILENAME)
+	params = csv.read_params(cmds['params'], input_evaluator_f=eval_f)
 	criteria_f = build_criteria_f(params)
 except:
 	print_usage()

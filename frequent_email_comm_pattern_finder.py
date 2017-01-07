@@ -17,11 +17,15 @@ from pyspark.mllib.fpm import FPGrowth
 import email_parsing as ep
 import sys
 import csv_util as csv
+import cmd_util as cmd
+
+# Set to this filename to be command line tolerant
+THIS_FILENAME = 'frequent_email_comm_pattern_finder.py'
 
 
 # Print usage instructions.
 def print_usage():
-	msg = "Usage: > frequent_email_comm_pattern_finder.py <parameter file> \n"
+	msg = "Usage: > frequent_email_comm_pattern_finder.py -params <parameter file> \n"
 	msg += "        ** SEE SAMPLE PARAMETER FILES FOR EXAMPLES \n"
 	print(msg)
 
@@ -48,7 +52,8 @@ min_size, max_size = 0, 1000000000000
 # Extract the params and set key variables:
 try:
 	eval_f = lambda x: csv.standard_eval_input(x, sep=';')
-	params = csv.read_params(sys.argv[1], input_evaluator_f=eval_f)
+	cmds = cmd.read_cmd_params(sys.argv, mainfile_suffix=THIS_FILENAME)
+	params = csv.read_params(cmds['params'], input_evaluator_f=eval_f)
 	email_folder = params['email_folder']
 	output_file = params['output_file']
 	if params.has_key('target_name_file'):
