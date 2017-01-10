@@ -60,7 +60,7 @@ params = None
 criteria_f = None	
 try:
 	eval_f = lambda x: csv.standard_eval_input(x, sep=';')
-	cmds = cmd.read_cmd_params(sys.argv, mainfile_suffix=THIS_FILENAME)
+	cmds = cmd.read_cmd_params(sys.argv, mainfile_suffix=THIS_FILENAME, input_evaluator_f=eval_f)
 	params = csv.read_params(cmds['params'], input_evaluator_f=eval_f)
 	criteria_f = build_criteria_f(params)
 except:
