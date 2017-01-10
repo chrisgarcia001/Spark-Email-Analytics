@@ -3,3 +3,9 @@ fino.tiberi@enron.com
 conal.tackney@enron.com
 howard.sangwine@enron.com
 coreen.herring@enron.com
+management.ubsw@enron.com
+robert.badeer@enron.com
+mary.hain@enron.com
+announcements.enron@enron.com
+susan.bailey@enron.com
+craig.breslau@enron.com
