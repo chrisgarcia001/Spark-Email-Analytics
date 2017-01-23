@@ -1,0 +1,10 @@
+PARAMETER,VALUE,
+email_folder,C:/DataSets/enron-demo/*/*/*,"###NOTE: To search all subfolders, simply end the email folder with /*. Example: test_email_data/*"
+output_file,./output/output.txt,
+min_support,0.001,
+num_partitions,1,
+itemset_size_range,3;10,
+address_classes,TO;FROM;CC;BCC,
+
+spark-submit frequent_email_comm_pattern_finder.py -email_folder C:/DataSets/enron-demo/*/*/* -output_file output_file -min_support 0.001 -num_partitions 1 -itemset_size_range 3:10 -address_classes TO:FROM:CC:BCC
+

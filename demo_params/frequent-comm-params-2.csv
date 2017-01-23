@@ -3,5 +3,5 @@ email_folder,C:/DataSets/enron-demo/*/*/*,"###NOTE: To search all subfolders, si
 output_file,./output/output.txt,
 min_support,0.001,
 num_partitions,1,
-itemset_size_range,3;10,
-address_classes,TO;FROM;CC;BCC,
+itemset_size_range,3:10,
+address_classes,TO:FROM:CC:BCC,

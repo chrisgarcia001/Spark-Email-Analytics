@@ -51,9 +51,8 @@ min_size, max_size = 0, 1000000000000
 
 # Extract the params and set key variables:
 try:
-	eval_f = lambda x: csv.standard_eval_input(x, sep=';')
-	cmds = cmd.read_cmd_params(sys.argv, mainfile_suffix=THIS_FILENAME, input_evaluator_f=eval_f)
-	params = csv.read_params(cmds['params'], input_evaluator_f=eval_f)
+	eval_f = lambda x: csv.standard_eval_input(x, sep=':')  
+	params = cmd.read_params(sys.argv, mainfile_suffix=THIS_FILENAME, input_evaluator_f=eval_f)
 	email_folder = params['email_folder']
 	output_file = params['output_file']
 	if params.has_key('target_name_file'):
