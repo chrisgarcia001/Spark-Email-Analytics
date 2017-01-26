@@ -59,7 +59,7 @@ def build_criteria_f(params):
 params = None
 criteria_f = None	
 try:
-	eval_f = lambda x: csv.standard_eval_input(x, sep=':')  
+	eval_f = lambda x: csv.standard_eval_input(x, sep='::')  
 	params = cmd.read_params(sys.argv, mainfile_suffix=THIS_FILENAME, input_evaluator_f=eval_f)
 	print('----- PARAMS -----')
 	print(params)
