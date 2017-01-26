@@ -10,3 +10,26 @@ address_classes,FROM::TO::CC::BCC,
 
 spark-submit frequent_email_comm_pattern_finder.py -email_folder test_email_data -output_file output_file target_match_range 1::5 -target_name_file ./test_data/test_email_list.txt -min_support 0.05 -num_partitions 1 -itemset_size_range 3::10 -address_classes TO::FROM::CC::BCC
 
+gs://email-analytics-demo-2017/code/frequent_email_comm_pattern_finder.py
+gs://email-analytics-demo-2017/code/email_parsing.py
+gs://email-analytics-demo-2017/code/csv_util.py
+gs://email-analytics-demo-2017/code/cmd_util.py
+
+-email_folder
+gs://email-analytics-demo-2017/data/test_email_data
+-output_file
+gs://email-analytics-demo-2017/output/frequent-comm-params-1.txt
+-target_match_range
+1::5
+-target_name_file
+gs://email-analytics-demo-2017/data/test_email_list.txt
+-min_support 
+0.05 
+-num_partitions 
+1
+-itemset_size_range
+3::10
+-address_classes
+TO::FROM::CC::BCC
+
+
