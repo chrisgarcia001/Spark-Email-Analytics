@@ -2,9 +2,9 @@ PARAMETER,VALUE
 email_folder,test_email_data
 output_file,.\output\output.txt 
 address_classes,TO
-cardinality_range,1::10
+cardinality_range,1:10
 
-spark-submit cardinality_email_address_search.py -email_folder test_email_data -output_file .\output\output.txt -address_classes TO -cardinality_range 1::10
+spark-submit cardinality_email_address_search.py -email_folder test_email_data -output_file .\output\output.txt -address_classes TO -cardinality_range 1:10
 
 -email_folder 
 gs://email-analytics-demo-2017/data/test_email_data 
@@ -13,7 +13,14 @@ gs://email-analytics-demo-2017/output/output.txt
 -address_classes 
 TO 
 -cardinality_range 
-1::10
+1:10
 
 
+gs://email-analytics-demo-2017/code/cardinality_email_address_search.py
+gs://email-analytics-demo-2017/code/email_parsing.py
+gs://email-analytics-demo-2017/code/csv_util.py
+gs://email-analytics-demo-2017/code/cmd_util.py
+
+-params
+gs://email-analytics-demo-2017/params/cardinality-search-params-1.csv
 
