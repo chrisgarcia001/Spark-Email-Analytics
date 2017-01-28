@@ -19,9 +19,12 @@ import sys
 import csv_util as csv
 import cmd_util as cmd
 
-# Set to this filename to be command line tolerant
+# Set to this filename to be command line tolerant.
 THIS_FILENAME = 'frequent_email_comm_pattern_finder.py'
 
+# Set up spark context.
+conf = SparkConf().setMaster('local').setAppName('Frequent Email Communication Pattern Finder')
+sc = SparkContext(conf = conf)
 
 # Print usage instructions.
 def print_usage():
@@ -52,13 +55,13 @@ min_size, max_size = 0, 1000000000000
 # Extract the params and set key variables:
 try:
 	eval_f = lambda x: csv.standard_eval_input(x, sep='::')  
-	params = cmd.read_params(sys.argv, mainfile_suffix=THIS_FILENAME, input_evaluator_f=eval_f)
+	params = cmd.read_params(sys.argv, mainfile_suffix=THIS_FILENAME, input_evaluator_f=eval_f, spark_context=sc)
 	email_folder = params['email_folder']
 	output_file = params['output_file']
 	if params.has_key('target_name_file'):
-		target_name_file = open(params['target_name_file'], 'r')	
-		target_names = filter(lambda x: not(x in [None, '', ' ', "\t", "\n"]), map(lambda y: y.strip(), target_name_file.readlines()))
-		target_name_file.close()
+		textFile = sc.textFile(params['target_name_file'])
+		lines = textFile.collect()
+		target_names = filter(lambda x: not(x in [None, '', ' ', "\t", "\n"]), map(lambda y: y.strip(), lines))
 	if params.has_key('target_match_range'):
 		min_matches, max_matches = params['target_match_range']
 	if params.has_key('itemset_size_range'):
@@ -76,8 +79,6 @@ except:
 	exit()
 
 # Main section - mine frequent itemsets, apply filtering, and store results.
-conf = SparkConf().setMaster('local').setAppName('Frequent Email Communication Pattern Finder')
-sc = SparkContext(conf = conf)
 data = sc.wholeTextFiles(params['email_folder'])
 transactions = data.map(lambda (file, text): ep.Email(text).select_addresses(address_classes))
 model = FPGrowth.train(transactions, minSupport=min_support, numPartitions=num_partitions)
