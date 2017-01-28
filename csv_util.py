@@ -39,13 +39,16 @@ def write_file(text, filename):
 	f.close()
 	
 # Reads a CSV as a list of rows	
-def read_csv(filename, include_headers = True, sep = ',', cleanf = lambda x: x):
-	fl = open(filename)
-	txt = cleanf(fl.read())
-	lines = fl.readlines()
+def read_csv(filename, include_headers = True, sep = ',', cleanf = lambda x: x, spark_context = None):
 	lines = []
+	if spark_context == None:
+		fl = open(filename)
+		txt = cleanf(fl.read())
+		lines = map(lambda y: y.strip(), txt.split("\n"))[start_pos:]
+	else:
+		textFile = spark_context.textFile(filename)
+		lines = textFile.collect()
 	start_pos = 0 if include_headers else 1
-	lines = map(lambda y: y.strip(), txt.split("\n"))[start_pos:]
 	return map(lambda x: x.split(sep), filter(lambda y: not(y in ['', ' ', "\t", None]), lines))
 
 # Evaluate and parse an input argument value.
@@ -72,10 +75,10 @@ def standard_eval_input(input, sep = ':'):
 	return vals	
 	
 # Read a CSV file as a param set (dict).
-def read_params(filename, sep=',', input_evaluator_f = standard_eval_input):
+def read_params(filename, sep=',', input_evaluator_f = standard_eval_input, spark_context = None):
 	if input_evaluator_f == None:
 		input_evaluator_f = lambda x: x
-	lines = read_csv(filename, sep=sep)
+	lines = read_csv(filename, sep=sep, spark_context=spark_context)
 	h = {}
 	for line in lines:
 		if len(line) > 1 and not(line[0].startswith('#')):

@@ -29,9 +29,9 @@ def read_cmd_params(cmd_args, mainfile_suffix=None, key_prefix='-', input_evalua
 # or whether it contains the params itself. It does so by looking to see if cmd_args contains a key_inds
 # named whatever is contained in csv_param_designator (e.g., defaults to see if there is a key called 'params').
 # The rest of the arguments are as shown above.	
-def read_params(cmd_args, mainfile_suffix=None, key_prefix='-', input_evaluator_f=cv.standard_eval_input, csv_param_designator='params'):
+def read_params(cmd_args, mainfile_suffix=None, key_prefix='-', input_evaluator_f=cv.standard_eval_input, csv_param_designator='params', spark_context = None):
 	params = read_cmd_params(cmd_args, mainfile_suffix, key_prefix, input_evaluator_f)
 	if params.has_key(csv_param_designator):
-		return cv.read_params(params['params'], input_evaluator_f=input_evaluator_f)
+		return cv.read_params(params['params'], input_evaluator_f=input_evaluator_f, spark_context=spark_context)
 	return params
 	

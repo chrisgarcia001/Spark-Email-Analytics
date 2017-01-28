@@ -55,12 +55,16 @@ def build_criteria_f(params):
 		return card >= min_card and card <= max_card and matches >= min_match and matches <= max_match
 	return criteria_f
 
+# Set up Spark context.
+conf = SparkConf().setMaster('local').setAppName('Cardinality Email Search')
+sc = SparkContext(conf = conf)	
+	
 # Extract the params and build the criteria function:
 params = None
 criteria_f = None	
 try:
 	eval_f = lambda x: csv.standard_eval_input(x, sep='::')  
-	params = cmd.read_params(sys.argv, mainfile_suffix=THIS_FILENAME, input_evaluator_f=eval_f)
+	params = cmd.read_params(sys.argv, mainfile_suffix=THIS_FILENAME, input_evaluator_f=eval_f, spark_context=sc)
 	print('----- PARAMS -----')
 	print(params)
 	criteria_f = build_criteria_f(params)
@@ -69,8 +73,6 @@ except:
 	exit()
 
 # Perform the search and write the output file.
-conf = SparkConf().setMaster('local').setAppName('Cardinality Email Search')
-sc = SparkContext(conf = conf)
 matches = sc.wholeTextFiles(params['email_folder']).filter(lambda (filename, text): criteria_f(text)).map(lambda (filename, text): filename)
 matches.saveAsTextFile(params['output_file'])
 exit()
